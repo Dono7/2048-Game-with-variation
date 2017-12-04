@@ -21,31 +21,33 @@ void partiePerdue(){
 	}
 	Matrice plateau = plateauVide() ;
 	plateau = plateauInitial(plateau) ;
-	jouerUnCoup(plateau, "Partie relancée ! Bonne chance. :) ") ;
+	mvprintw(18, 10, "Partie relancée ! Bonne chance. :) ") ;
+	jouerUnCoup(plateau) ;
+	
 }
 
-Matrice jouerUnCoup(Matrice plateau, char const *commentaire) {
-    int commande ; 
+
+Matrice jouerUnCoup(Matrice plateau) {
+	int commande ; 
 
 		//affiche le plateau de jeu, score et msg d'erreur/de fin
 	clear();
 	affichageJeu(plateau); 
-	mvprintw(18, 10, commentaire) ; 	
+	//mvprintw(18, 10, commentaire) ; 	FAIT PARTIE DE L'ANCIENNE VERSION
 	refresh();
 	
-	//Demande la commante
+	//Demande la commande
 	cin >> commande ; 
 	commande = getch();
 	// R:114, Bas/Haut/Gauche/droite : 258 à 261
 	
 	if ( not commandeVerifier(commande) ) { 
-        jouerUnCoup(plateau, "Commande invalide"); 
+        mvprintw(18,10,"Commande invalide"); 
     } else { 
         plateau = commandeExecuter(commande, plateau); 
         plateau = testsDeJeu(plateau); 
-        jouerUnCoup(plateau," "); 
-        return plateau; 
     } 
+        return plateau; 
 }
 
 
@@ -59,7 +61,7 @@ int main(){
 	if ( !has_colors() ) {	// vérifie que les couleurs sont supportées
 		printw("Erreur : Le terminal ne supporte pas les couleurs.");
 		getch();
-		return -1;
+		 return -1;
 	}
 	start_color();		// active les couleurs
 	keypad(stdscr, TRUE); //active les flèches du clavier
@@ -72,8 +74,10 @@ int main(){
     plateau = plateauInitial(plateau);
 //    plateau = { {0,0,0,0} , {0,0,1024,0} , {0,1024,0,0} , {0,0,0,0} , {0} };
 
-
-    jouerUnCoup(plateau, " ");
+	int boucleInfinie = 1;
+	while (boucleInfinie == 1) {
+    plateau = jouerUnCoup(plateau); 
+	}
 
 
 return 0;

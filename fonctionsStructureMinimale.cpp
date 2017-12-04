@@ -508,9 +508,14 @@ bool eventProba1surN(float n) {
     return false; }
 }
 
+int numCasePrSpawn(int n){
+	int numCase;
+	numCase = rand() % (n-1) - 1; //prend un nbr aleat entre 1 et n
+	return numCase;
+}
 
-float nbrCasesVides(Matrice plateau){
-    float compteur=0;
+int nbrCasesVides(Matrice plateau){
+    int compteur=0;
     for (int i=0 ; i<4 ; i++) {
         for (int j=0 ; j<4 ; j++) {
             if ( plateau[i][j] == 0) {
@@ -531,13 +536,14 @@ int deuxOuQuatre(){
 
 Matrice randomspawn(Matrice plateau){
     int nbrQuiSpawn = deuxOuQuatre() ; // choisi entre 2 et 4
-    float casesVides = nbrCasesVides(plateau) ;
+    int casesVides = nbrCasesVides(plateau) ;
+	int numCase = numCasePrSpawn( casesVides ) ;
     int confirmation=0;
-    while (confirmation == 0) {
+    //while (confirmation == 0) {
         for (int i=0 ; i<4 ; i++) {     // Balaye le plateau à la recherche de cases vides
             for (int j=0 ; j<4 ; j++) {
-                if ( plateau[i][j] == 0) { //Si la case est vide
-                    if ( eventProba1surN(casesVides) ) {    // Si l'event est validé
+                if ( plateau[i][j] == 0) { //Si la case correspond à notre numéro
+                    if ( plateau[i][j] == numCase ) {    // Si l'event est validé
                         plateau[i][j] = nbrQuiSpawn ; // On assigne le nombre à la case
                         return plateau;
                         confirmation++; //inutile, juste au cas où, pour éviter un problème avec une boucle infinie
@@ -545,7 +551,7 @@ Matrice randomspawn(Matrice plateau){
                 }
             }
         }
-   }
+   //}
 }
 
 
@@ -602,14 +608,16 @@ Matrice commandeExecuter(int commande, Matrice plateau) {
             // -- RESTART --
     if (commande==114) {
         plateau = plateauInitial(plateau);
-        jouerUnCoup(plateau,"Le jeu a ete relance. Enjoy :p") ;
+        jouerUnCoup(plateau) ;
+		mvprintw(18, 10, "Le jeu a ete relance. Enjoy :p") ;
         return plateau;
     } else {
 
             // -- HAUT --
     if (commande==259) {
         if ( not mouvmtPossibleHaut(plateau) ) {
-            jouerUnCoup(plateau,"Mouvement impossible") ;
+            jouerUnCoup(plateau) ;
+			mvprintw(18, 10, "Mouvement impossible") ;
             return plateau;
         } else {
         plateau = deplacementHaut(plateau);
@@ -621,7 +629,8 @@ Matrice commandeExecuter(int commande, Matrice plateau) {
                 // -- DROITE --
     if (commande==261) {
         if ( not mouvmtPossibleDroite(plateau) ) {
-            jouerUnCoup(plateau,"Mouvement impossible") ;
+            jouerUnCoup(plateau) ;
+			mvprintw(18, 10, "Mouvement impossible") ;
             return plateau;
         } else {
         plateau = deplacementDroite(plateau);
@@ -633,7 +642,8 @@ Matrice commandeExecuter(int commande, Matrice plateau) {
             // -- Bas --
     if (commande==258) {
         if ( not mouvmtPossibleBas(plateau) ) {
-            jouerUnCoup(plateau,"Mouvement impossible") ;
+            jouerUnCoup(plateau) ;
+			mvprintw(18, 10, "Mouvement impossible") ;
             return plateau;
         } else {
         plateau = deplacementBas(plateau);
@@ -645,7 +655,8 @@ Matrice commandeExecuter(int commande, Matrice plateau) {
                 // -- GAUCHE --
     if (commande==260) {
         if ( not mouvmtPossibleGauche(plateau) ) {
-            jouerUnCoup(plateau,"Mouvement impossible") ;
+            jouerUnCoup(plateau) ;
+			mvprintw(18, 10, "Mouvement impossible") ;
             return plateau;
         } else {
         plateau = deplacementGauche(plateau);
@@ -661,7 +672,8 @@ Matrice commandeExecuter(int commande, Matrice plateau) {
 Matrice testsDeJeu(Matrice plateau) {
 
     if ( estGagne(plateau) ) {
-        jouerUnCoup(plateau,"OUE C GAGNEEEE... On recommence ? Appuyer sur R pour Restart") ;
+		jouerUnCoup(plateau) ;
+		mvprintw(18, 10, "OUE C GAGNEEEE... On recommence ? Appuyer sur R pour Restart") ;
         return plateau;
     } else {
     if ( estBloque(plateau) ) {

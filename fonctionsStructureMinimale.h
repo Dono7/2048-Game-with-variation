@@ -121,7 +121,7 @@ Matrice testsDeJeu(Matrice plateau) ;
  * @param le plateau de jeu à afficher
  * @param commentaire en cas d'erreur ou de jeu gagné/perdu
  **/
-Matrice jouerUnCoup(Matrice plateau, char const *commentaire);
+Matrice jouerUnCoup(Matrice plateau) ;
 
 /** Affiche un message Partie perdue jusqu'à ce que l'utilisateur relance une partie
  * aucun param ou return

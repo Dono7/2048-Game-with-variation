@@ -54,6 +54,7 @@ Matrice jouerUnCoup(Matrice plateau) {
 
 
 int main(){
+
         // --INITIALISATIONS DES PARAMS --
 
 		// initialisations pour ncurses
@@ -62,21 +63,23 @@ int main(){
 		printw("Erreur : Le terminal ne supporte pas les couleurs.");
 		getch();
 		 return -1;
-	}
+	} 
 	start_color();		// active les couleurs
 	keypad(stdscr, TRUE); //active les flèches du clavier
 	
         // Temps pour l'aléatoire
     srand( time(0) );
-
+	
         // plateau de jeu
     Matrice plateau;
-    plateau = plateauInitial(plateau);
-//    plateau = { {0,0,0,0} , {0,0,1024,0} , {0,1024,0,0} , {0,0,0,0} , {0} };
+//	plateau = plateauInitial(plateau);
+    plateau = { {0,0,0,0} , {0,0,1024,0} , {0,1024,0,0} , {0,0,0,0} , {0} };
+	mvprintw(15, 15, "LE TXT S'AFFICHE?");
+	getch();
 
 	int boucleInfinie = 1;
 	while (boucleInfinie == 1) {
-    plateau = jouerUnCoup(plateau); 
+	plateau = jouerUnCoup(plateau); 
 	}
 
 

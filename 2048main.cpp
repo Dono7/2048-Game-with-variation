@@ -39,14 +39,18 @@ Matrice jouerUnCoup(Matrice plateau) {
 	//Demande la commande
 	cin >> commande ; 
 	commande = getch();
-	// R:114, Bas/Haut/Gauche/droite : 258 ‡ 261
+	// R:114, Bas/Haut/Gauche/droite : 258 a 261
 	
 	if ( not commandeVerifier(commande) ) { 
         mvprintw(18,10,"Commande invalide"); 
     } else { 
-        plateau = commandeExecuter(commande, plateau); 
-        plateau = testsDeJeu(plateau); 
-    } 
+	plateau = commandeExecuter(commande, plateau); 
+		mvprintw(17,17,"CommandeExecuter fait");
+		getch();
+	plateau = testsDeJeu(plateau); 
+		mvprintw(18,17,"testsDeJeu fait");
+		getch();
+    }  
         return plateau; 
 }
 
@@ -78,10 +82,15 @@ int main(){
 	getch();
 
 	int boucleInfinie = 1;
-	while (boucleInfinie == 1) {
+//	while (boucleInfinie == 1) {
 	plateau = jouerUnCoup(plateau); 
-	}
+//	}
 
+
+		//permet d'observer ce qui se passe en fin de programme
+		//afin de trouver d'o√π vient l'erreur Core Dumped
+	getch();
+	endwin();
 
 return 0;
 }

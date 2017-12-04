@@ -116,7 +116,7 @@ void afficheCase(int valeurCase) {
 		printw(" 2048");
 		attroff( COLOR_PAIR(4) );
 	} else {
-		printw("Erreur :Valeur de la case incorrect");
+		printw("%d", valeurCase);
 	} } } } } } } } }  } } } // !! Cette ligne peut entraîner des erreurs
 					  // si il n'y a pas le bon nombre d'accolades
 }
@@ -534,7 +534,7 @@ int deuxOuQuatre(){
 }
 
 
-Matrice randomspawn(Matrice plateau){
+Matrice randomspawn(Matrice plateau){ /**
     int nbrQuiSpawn = deuxOuQuatre() ; // choisi entre 2 et 4
     int casesVides = nbrCasesVides(plateau) ;
 	int numCase = numCasePrSpawn( casesVides ) ;
@@ -551,7 +551,8 @@ Matrice randomspawn(Matrice plateau){
                 }
             }
         }
-   //}
+   //} **/
+	return plateau;
 }
 
 
@@ -611,21 +612,21 @@ Matrice commandeExecuter(int commande, Matrice plateau) {
         jouerUnCoup(plateau) ;
 		mvprintw(18, 10, "Le jeu a ete relance. Enjoy :p") ;
         return plateau;
-    } else {
+    }  else {
 
             // -- HAUT --
-    if (commande==259) {
-        if ( not mouvmtPossibleHaut(plateau) ) {
+    if (commande==259) { 
+        if ( not mouvmtPossibleHaut(plateau) ) { 
             jouerUnCoup(plateau) ;
 			mvprintw(18, 10, "Mouvement impossible") ;
             return plateau;
-        } else {
-        plateau = deplacementHaut(plateau);
+         } else { 
+        //plateau = deplacementHaut(plateau);
         plateau = randomspawn(plateau);
         return plateau;
-        }
+         }
     }
-
+/**
                 // -- DROITE --
     if (commande==261) {
         if ( not mouvmtPossibleDroite(plateau) ) {
@@ -664,8 +665,8 @@ Matrice commandeExecuter(int commande, Matrice plateau) {
         return plateau;
         }
     }
-
-    }
+**/
+    }  return plateau;
 }
 
 

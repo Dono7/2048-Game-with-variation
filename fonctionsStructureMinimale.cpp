@@ -666,6 +666,10 @@ Matrice commandeExecuter(int commande, Matrice plateau) {
 Matrice testsDeJeu(Matrice plateau) {
 
     if ( estGagne(plateau) ) {
+				//On affiche le plateau gagnant
+		clear();
+		affichageJeu(plateau);
+
 		mvprintw(18, 10, "OUE C GAGNEEEE... On recommence ? Appuyer sur R pour Restart") ;
 		
 			//On demande d'appuyer sur R

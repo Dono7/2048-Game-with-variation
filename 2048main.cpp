@@ -29,13 +29,12 @@ Matrice jouerUnCoup(Matrice plateau) {
 	//mvprintw(18, 10, commentaire) ; 	// FAIT PARTI DE L'ANCIENNE VERSION
 
 
-
+		// On vérifie que la commande rentrée existe
 	if ( not commandeVerifier(commande) ) {
         mvprintw(18,10,"Commande invalide");
 		refresh();
 
-
-
+		// On execute le mvmt et test si le jeu est gagne/perdu
 	} else {
 	plateau = commandeExecuter(commande, plateau);
 	plateau = testsDeJeu(plateau);
@@ -66,28 +65,9 @@ int main(){
 
         // plateau de jeu
     Matrice plateau;
-	plateau = { {2,8,32,4} , {16,64,2,8} , {8,16,32,4} , {2,8,4,2} , {99} } ;
-	plateau = { {2,8,4,2} , {2,16,8,4} , {2,8,2,8} , {16,32,4,2} , {99} } ;
-	if( mouvmtPossibleHaut(plateau) or mouvmtPossibleDroite(plateau) or mouvmtPossibleGauche(plateau) or mouvmtPossibleBas(plateau) ) {
-        mvprintw(21,12,"Un mouvement est possibles");
-	} else {
-	mvprintw(21,12,"Aucun mouvement n'est possible") ; }
-	if( estBloque(plateau) ) {
-		affichageJeu(plateau) ;
-		mvprintw(22,12,"Test réussi : Le jeu est bloqué");
-		refresh; getch();
-	} else {
-		affichageJeu(plateau) ;
-		getch();
-		mvprintw(22,12,"Test rate : Le jeu ne détecte pas le blocage");
-		refresh; getch();
-
-	}
-
-
 	plateau = plateauInitial(plateau);
-	// pour tester le jeu gagnant
-    //plateau = { {0,0,0,0} , {0,0,1024,0} , {0,1024,0,0} , {0,0,0,0} , {0} };
+	// pour tester le jeu gagnant :
+    plateau = { {0,0,0,0} , {0,0,1024,0} , {0,1024,0,0} , {0,0,0,0} , {0} };
 
 	int boucleInfinie = 1;
 	while (boucleInfinie == 1) {

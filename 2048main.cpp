@@ -45,11 +45,11 @@ Matrice jouerUnCoup(Matrice plateau) {
         mvprintw(18,10,"Commande invalide"); 
     } else { 
 	plateau = commandeExecuter(commande, plateau); 
-		mvprintw(17,17,"CommandeExecuter fait");
-		getch();
+		//mvprintw(17,17,"CommandeExecuter fait");
+		//getch();
 	plateau = testsDeJeu(plateau); 
-		mvprintw(18,17,"testsDeJeu fait");
-		getch();
+		//mvprintw(18,17,"testsDeJeu fait");
+		//getch();
     }  
         return plateau; 
 }
@@ -76,15 +76,15 @@ int main(){
 	
         // plateau de jeu
     Matrice plateau;
-//	plateau = plateauInitial(plateau);
-    plateau = { {0,0,0,0} , {0,0,1024,0} , {0,1024,0,0} , {0,0,0,0} , {0} };
-	mvprintw(15, 15, "LE TXT S'AFFICHE?");
-	getch();
+	plateau = plateauInitial(plateau);
+    //plateau = { {0,0,0,0} , {0,0,1024,0} , {0,1024,0,0} , {0,0,0,0} , {0} };
+	//mvprintw(15, 15, "LE TXT S'AFFICHE?");
+	//getch();
 
 	int boucleInfinie = 1;
-//	while (boucleInfinie == 1) {
+	while (boucleInfinie == 1) {
 	plateau = jouerUnCoup(plateau); 
-//	}
+	}
 
 
 		//permet d'observer ce qui se passe en fin de programme

@@ -116,7 +116,7 @@ void afficheCase(int valeurCase) {
 		printw(" 2048");
 		attroff( COLOR_PAIR(4) );
 	} else {
-		printw("%d", valeurCase);
+		printw("Erreur: Valeur de case incorrecte");
 	} } } } } } } } }  } } } // !! Cette ligne peut entraîner des erreurs
 					  // si il n'y a pas le bon nombre d'accolades
 }
@@ -443,7 +443,8 @@ bool mouvmtPossibleGauche(Matrice plateau) {
 // --- TEST DE SITUATIONS ---
 
 bool estBloque(Matrice plateau) {
-    if ( mouvmtPossibleHaut(plateau) or mouvmtPossibleDroite(plateau) or mouvmtPossibleBas(plateau) or mouvmtPossibleGauche(plateau) ){
+    //int casesVides = nbrCasesVides(plateau) ;
+    if (/**casesVides==0 or**/ mouvmtPossibleHaut(plateau) or mouvmtPossibleDroite(plateau) or mouvmtPossibleBas(plateau) or mouvmtPossibleGauche(plateau) ){
         return false;
     } else {
         return true; }
@@ -510,7 +511,7 @@ bool eventProba1surN(float n) {
 
 int numCasePrSpawn(int n){
 	int numCase;
-	numCase = rand() % (n-1) - 1; //prend un nbr aleat entre 1 et n
+	numCase = rand() % n + 1; //prend un nbr aleat entre 1 et n
 	return numCase;
 }
 
@@ -534,24 +535,28 @@ int deuxOuQuatre(){
 }
 
 
-Matrice randomspawn(Matrice plateau){ /**
+Matrice randomspawn(Matrice plateau){
     int nbrQuiSpawn = deuxOuQuatre() ; // choisi entre 2 et 4
     int casesVides = nbrCasesVides(plateau) ;
 	int numCase = numCasePrSpawn( casesVides ) ;
-    int confirmation=0;
+    int confirmation=0; 
+	mvprintw(20,0, "Il y a %d cases vides ? et %d est le num dla case où ça spawn", casesVides, numCase);
+	refresh();
+	getch();
     //while (confirmation == 0) {
         for (int i=0 ; i<4 ; i++) {     // Balaye le plateau à la recherche de cases vides
             for (int j=0 ; j<4 ; j++) {
-                if ( plateau[i][j] == 0) { //Si la case correspond à notre numéro
-                    if ( plateau[i][j] == numCase ) {    // Si l'event est validé
+                if ( plateau[i][j] == 0) {  //Si la case correspond à notre numéro
+					confirmation++;
+					if (confirmation == numCase) {// Si l'event est validé
                         plateau[i][j] = nbrQuiSpawn ; // On assigne le nombre à la case
                         return plateau;
                         confirmation++; //inutile, juste au cas où, pour éviter un problème avec une boucle infinie
-                    }
+                    } 
                 }
             }
         }
-   //} **/
+   //} 
 	return plateau;
 }
 
@@ -573,6 +578,7 @@ Matrice randomspawn(Matrice plateau){ /**
 Matrice plateauVide(){
     Matrice m;
     m = { {0,0,0,0} , {0,0,0,0} , {0,0,0,0} , {0,0,0,0} , {0} };
+    m = { {0,0,0,8} , {8,8,8,8} , {8,8,8,8} , {8,8,8,8} , {0} };
     return m;
 }
 
@@ -621,12 +627,12 @@ Matrice commandeExecuter(int commande, Matrice plateau) {
 			mvprintw(18, 10, "Mouvement impossible") ;
             return plateau;
          } else { 
-        //plateau = deplacementHaut(plateau);
+        plateau = deplacementHaut(plateau);
         plateau = randomspawn(plateau);
         return plateau;
          }
     }
-/**
+
                 // -- DROITE --
     if (commande==261) {
         if ( not mouvmtPossibleDroite(plateau) ) {
@@ -665,7 +671,7 @@ Matrice commandeExecuter(int commande, Matrice plateau) {
         return plateau;
         }
     }
-**/
+
     }  return plateau;
 }
 

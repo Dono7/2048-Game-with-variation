@@ -67,7 +67,7 @@ int main(){
     Matrice plateau;
 	plateau = plateauInitial(plateau);
 	// pour tester le jeu gagnant :
-    plateau = { {0,0,0,0} , {0,0,1024,0} , {0,1024,0,0} , {0,0,0,0} , {0} };
+    //plateau = { {0,0,0,0} , {0,0,1024,0} , {0,1024,0,0} , {0,0,0,0} , {0} };
 
 	int boucleInfinie = 1;
 	while (boucleInfinie == 1) {

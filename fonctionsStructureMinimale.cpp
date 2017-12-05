@@ -606,7 +606,6 @@ Matrice commandeExecuter(int commande, Matrice plateau) {
             // -- RESTART --
     if (commande==114) {
         plateau = plateauInitial(plateau);
-        jouerUnCoup(plateau) ;
 		mvprintw(18, 10, "Le jeu a ete relance. Enjoy :p") ;
         return plateau;
     }  else {
@@ -677,6 +676,8 @@ Matrice testsDeJeu(Matrice plateau) {
 		while (c != 114) {
 			c = getch();
 		}
+		clear();
+		mvprintw(18, 10, "Le jeu a ete relance. Enjoy :p") ;
 
 			//On prépare un jeu relancé
 		plateau = plateauInitial(plateau) ;
@@ -694,6 +695,8 @@ Matrice testsDeJeu(Matrice plateau) {
 		while (c != 114) {
 			c = getch();
 		}
+		clear();
+		mvprintw(18, 10, "Le jeu a ete relance. Enjoy :p") ;
 
 			//On prépare un jeu relancé
 		plateau = plateauInitial(plateau) ;

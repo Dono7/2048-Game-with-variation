@@ -13,45 +13,35 @@ typedef vector< vector<int> > Matrice;
 #include "fonctionsStructureMinimale.h"
 
 
-void partiePerdue(){
-	mvprintw(18,10, "Partie perdue... Appuyer sur R pour relancer une partie.") ;
-	int c=0;
-	while (c != 114) {
-		c = getch();
-	}
-	Matrice plateau = plateauVide() ;
-	plateau = plateauInitial(plateau) ;
-	mvprintw(18, 10, "Partie relancée ! Bonne chance. :) ") ;
-	jouerUnCoup(plateau) ;
-	
-}
 
 
 Matrice jouerUnCoup(Matrice plateau) {
-	int commande ; 
+	int commande ;
 
-		//affiche le plateau de jeu, score et msg d'erreur/de fin
-	clear();
-	affichageJeu(plateau); 
-	//mvprintw(18, 10, commentaire) ; 	FAIT PARTIE DE L'ANCIENNE VERSION
-	refresh();
-	
+
 	//Demande la commande
-	cin >> commande ; 
 	commande = getch();
 	// R:114, Bas/Haut/Gauche/droite : 258 a 261
-	
-	if ( not commandeVerifier(commande) ) { 
-        mvprintw(18,10,"Commande invalide"); 
-    } else { 
-	plateau = commandeExecuter(commande, plateau); 
-		//mvprintw(17,17,"CommandeExecuter fait");
-		//getch();
-	plateau = testsDeJeu(plateau); 
-		//mvprintw(18,17,"testsDeJeu fait");
-		//getch();
-    }  
-        return plateau; 
+
+			//affiche le plateau de jeu, score et msg d'erreur/de fin
+	clear();
+	affichageJeu(plateau);
+	//mvprintw(18, 10, commentaire) ; 	// FAIT PARTI DE L'ANCIENNE VERSION
+
+
+
+	if ( not commandeVerifier(commande) ) {
+        mvprintw(18,10,"Commande invalide");
+		refresh();
+
+
+
+	} else {
+	plateau = commandeExecuter(commande, plateau);
+	plateau = testsDeJeu(plateau);
+		refresh();
+    }
+return plateau;
 }
 
 
@@ -67,29 +57,44 @@ int main(){
 		printw("Erreur : Le terminal ne supporte pas les couleurs.");
 		getch();
 		 return -1;
-	} 
+	}
 	start_color();		// active les couleurs
 	keypad(stdscr, TRUE); //active les flèches du clavier
-	
+
         // Temps pour l'aléatoire
     srand( time(0) );
-	
+
         // plateau de jeu
     Matrice plateau;
-	plateau = plateauInitial(plateau);
-    //plateau = { {0,0,0,0} , {0,0,1024,0} , {0,1024,0,0} , {0,0,0,0} , {0} };
-	//mvprintw(15, 15, "LE TXT S'AFFICHE?");
-	//getch();
+	plateau = { {2,8,32,4} , {16,64,2,8} , {8,16,32,4} , {2,8,4,2} , {99} } ;
+	plateau = { {2,8,4,2} , {2,16,8,4} , {2,8,2,8} , {16,32,4,2} , {99} } ;
+	if( mouvmtPossibleHaut(plateau) or mouvmtPossibleDroite(plateau) or mouvmtPossibleGauche(plateau) or mouvmtPossibleBas(plateau) ) {
+        mvprintw(21,12,"Un mouvement est possibles");
+	} else {
+	mvprintw(21,12,"Aucun mouvement n'est possible") ; }
+	if( estBloque(plateau) ) {
+		affichageJeu(plateau) ;
+		mvprintw(22,12,"Test réussi : Le jeu est bloqué");
+		refresh; getch();
+	} else {
+		affichageJeu(plateau) ;
+		getch();
+		mvprintw(22,12,"Test rate : Le jeu ne détecte pas le blocage");
+		refresh; getch();
 
-	int boucleInfinie = 1;
-	while (boucleInfinie == 1) {
-	plateau = jouerUnCoup(plateau); 
 	}
 
 
-		//permet d'observer ce qui se passe en fin de programme
-		//afin de trouver d'oÃ¹ vient l'erreur Core Dumped
-	getch();
+	plateau = plateauInitial(plateau);
+	// pour tester le jeu gagnant
+    //plateau = { {0,0,0,0} , {0,0,1024,0} , {0,1024,0,0} , {0,0,0,0} , {0} };
+
+	int boucleInfinie = 1;
+	while (boucleInfinie == 1) {
+		affichageJeu(plateau);
+	plateau = jouerUnCoup(plateau);
+	}
+
 	endwin();
 
 return 0;

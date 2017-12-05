@@ -443,8 +443,7 @@ bool mouvmtPossibleGauche(Matrice plateau) {
 // --- TEST DE SITUATIONS ---
 
 bool estBloque(Matrice plateau) {
-    //int casesVides = nbrCasesVides(plateau) ;
-    if (/**casesVides==0 or**/ mouvmtPossibleHaut(plateau) or mouvmtPossibleDroite(plateau) or mouvmtPossibleBas(plateau) or mouvmtPossibleGauche(plateau) ){
+    if ( mouvmtPossibleHaut(plateau) or mouvmtPossibleDroite(plateau) or mouvmtPossibleGauche(plateau) or mouvmtPossibleBas(plateau) ){
         return false;
     } else {
         return true; }
@@ -499,7 +498,6 @@ float aleat(){
 }
 
 
-
 bool eventProba1surN(float n) {
     // Un place x aléatoirement dans un intervalle entre 0 et n
     float x = rand() * n / (double)RAND_MAX ;
@@ -538,27 +536,21 @@ int deuxOuQuatre(){
 Matrice randomspawn(Matrice plateau){
     int nbrQuiSpawn = deuxOuQuatre() ; // choisi entre 2 et 4
     int casesVides = nbrCasesVides(plateau) ;
-	int numCase = numCasePrSpawn( casesVides ) ;
-    int confirmation=0; 
-	mvprintw(20,0, "Il y a %d cases vides ? et %d est le num dla case où ça spawn", casesVides, numCase);
-	refresh();
-	getch();
-    //while (confirmation == 0) {
-        for (int i=0 ; i<4 ; i++) {     // Balaye le plateau à la recherche de cases vides
-            for (int j=0 ; j<4 ; j++) {
-                if ( plateau[i][j] == 0) {  //Si la case correspond à notre numéro
-					confirmation++;
-					if (confirmation == numCase) {// Si l'event est validé
-                        plateau[i][j] = nbrQuiSpawn ; // On assigne le nombre à la case
-                        return plateau;
-                        confirmation++; //inutile, juste au cas où, pour éviter un problème avec une boucle infinie
-                    } 
-                }
-            }
-        }
-   //} 
-	return plateau;
-}
+	int numCase = numCasePrSpawn( casesVides ) ; //Détermine quelle case va 
+    int numCompteur=0; 
+	for (int i=0 ; i<4 ; i++) {     // Balaye le plateau à la recherche de cases vides
+		for (int j=0 ; j<4 ; j++) { 
+			if ( plateau[i][j] == 0) {  //Trouve une case vide
+				numCompteur++;
+				if (numCompteur == numCase) {// Si c'est la bonne case
+					plateau[i][j] = nbrQuiSpawn ; // On assigne le nombre à la case
+					return plateau;
+				} 
+			} 
+		} 
+	} 
+	return plateau; //inutile, mais au cas où
+} 
 
 
 
@@ -578,7 +570,6 @@ Matrice randomspawn(Matrice plateau){
 Matrice plateauVide(){
     Matrice m;
     m = { {0,0,0,0} , {0,0,0,0} , {0,0,0,0} , {0,0,0,0} , {0} };
-    m = { {0,0,0,8} , {8,8,8,8} , {8,8,8,8} , {8,8,8,8} , {0} };
     return m;
 }
 
@@ -623,7 +614,6 @@ Matrice commandeExecuter(int commande, Matrice plateau) {
             // -- HAUT --
     if (commande==259) { 
         if ( not mouvmtPossibleHaut(plateau) ) { 
-            jouerUnCoup(plateau) ;
 			mvprintw(18, 10, "Mouvement impossible") ;
             return plateau;
          } else { 
@@ -636,7 +626,6 @@ Matrice commandeExecuter(int commande, Matrice plateau) {
                 // -- DROITE --
     if (commande==261) {
         if ( not mouvmtPossibleDroite(plateau) ) {
-            jouerUnCoup(plateau) ;
 			mvprintw(18, 10, "Mouvement impossible") ;
             return plateau;
         } else {
@@ -649,7 +638,6 @@ Matrice commandeExecuter(int commande, Matrice plateau) {
             // -- Bas --
     if (commande==258) {
         if ( not mouvmtPossibleBas(plateau) ) {
-            jouerUnCoup(plateau) ;
 			mvprintw(18, 10, "Mouvement impossible") ;
             return plateau;
         } else {
@@ -662,7 +650,6 @@ Matrice commandeExecuter(int commande, Matrice plateau) {
                 // -- GAUCHE --
     if (commande==260) {
         if ( not mouvmtPossibleGauche(plateau) ) {
-            jouerUnCoup(plateau) ;
 			mvprintw(18, 10, "Mouvement impossible") ;
             return plateau;
         } else {
@@ -679,14 +666,37 @@ Matrice commandeExecuter(int commande, Matrice plateau) {
 Matrice testsDeJeu(Matrice plateau) {
 
     if ( estGagne(plateau) ) {
-		jouerUnCoup(plateau) ;
 		mvprintw(18, 10, "OUE C GAGNEEEE... On recommence ? Appuyer sur R pour Restart") ;
+		
+			//On demande d'appuyer sur R
+		int c=0;
+		while (c != 114) {
+			c = getch();
+		}
+
+			//On prépare un jeu relancé
+		plateau = plateauInitial(plateau) ;
+
         return plateau;
     } else {
     if ( estBloque(plateau) ) {
-		partiePerdue();
+			//On affiche le plateau perdant
+		clear();
+		affichageJeu(plateau);
+		mvprintw(18,10, "Partie perdue... :'( Appuyer sur R pour relancer une partie.") ;
+		
+			//On demande d'appuyer sur R
+		int c=0;
+		while (c != 114) {
+			c = getch();
+		}
+
+			//On prépare un jeu relancé
+		plateau = plateauInitial(plateau) ;
+
 		return plateau;
     } else {
+		//Si la partie est ni perdue ni gagné, on fait rien
     return plateau;}
 
     }

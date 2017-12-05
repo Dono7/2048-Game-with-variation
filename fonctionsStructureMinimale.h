@@ -68,6 +68,12 @@ bool estBloque(Matrice plateau) ;
 bool estGagne(Matrice plateau) ;
 bool grillePleine(Matrice plateau) ;		// utile ? ...
 
+/** Renvoie le nombre de cases vide du plateau
+ * @param le plateau de jeu
+ * @return un entier
+ **/
+int nbrCasesVides(Matrice plateau) ;
+
 			// --- RANDOM ---
 
 /** Indique si un évènement de proba 1/N s'est produit ou non

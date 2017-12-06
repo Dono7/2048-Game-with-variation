@@ -134,37 +134,46 @@ void afficheLigne(Matrice plateau, int ligne){
 	printw("|\n"); //retour à la ligne
 }
 
-void affichePlateau(Matrice plateau) {
+void affichePlateau(struct jeuGlobal jeu) {
 	char const *ligneSeparation = "+-----------------------+\n" ; //initialise la ligne de séparation
 	mvprintw(1, (COLS/2) - (25/2), ligneSeparation) ; // Centre le plateau à la deuxième ligne
 	move(2, (COLS/2) - (25/2)) ;
-	afficheLigne(plateau, 0);
+	afficheLigne(jeu.plateau, 0);
 	mvprintw(3, (COLS/2) - (25/2), ligneSeparation) ;
 	move(4, (COLS/2) - (25/2)) ;
-	afficheLigne(plateau, 1);
+	afficheLigne(jeu.plateau, 1);
 	mvprintw(5, (COLS/2) - (25/2), ligneSeparation) ;
 	move(6, (COLS/2) - (25/2)) ;
-	afficheLigne(plateau, 2);
+	afficheLigne(jeu.plateau, 2);
 	mvprintw(7, (COLS/2) - (25/2), ligneSeparation) ;
 	move(8, (COLS/2) - (25/2)) ;
-	afficheLigne(plateau, 3);
+	afficheLigne(jeu.plateau, 3);
 	mvprintw(9, (COLS/2) - (25/2), ligneSeparation) ;
 	refresh();
 	
-	move(11,15); //l'affichage du score se fait sous le tableau avec une marge gauche
-	attron(A_REVERSE);
-	printw(" SCORE : %d ", plateau[4][0]) ;
-	attroff(A_REVERSE);
-	move(13,0) ; //prépare le prochain affichage
+		//On va chercher la valeur du highscore
+	ifstream highscore_file("Highscore") ;
+	int highscore;
+	highscore_file >> highscore;
+	highscore_file.close(); //On ferme le fichier
+
+		//l'affichage du score se fait sous le tableau avec une marge gauche
+	attron(A_REVERSE); 			// Permet d'écrire Noir sur Blanc
+	mvprintw(11,15, " SCORE : %d ", jeu.score) ;
+	mvprintw(12,15, " HIGHSCORE : %d ", highscore) ;
+	attroff(A_REVERSE);			// Désactive le noir sur blanc
+	move(14,0) ; //prépare le prochain affichage
+	
 }
 
 
 
 void afficheCommandes(){
-	
-	move(13,0);		//affichage juste sous le plateau
+		//Le move ci-dessous est désactivé car il est géré par la fonction
+		//affichePlateau, voire quelques lignes plus haut
+	//move(14,0);	
 	printw("Ctrl+C : Quitter \n") ;
-	printw("R : Restart \n \n") ;
+	printw("R : Restart \n") ;
 	printw("Utiliser les fleches pour se deplacer") ;
 	move(17,0);
 
@@ -250,73 +259,82 @@ Matrice deplacementPartielGauche(Matrice plateau) {
 
 // --- FUSION ---
 
-Matrice fusionHaut(Matrice plateau) {
+struct jeuGlobal fusionHaut(struct jeuGlobal jeu) {
     int launchscan = 0;
     for (int i=0 ; i<3 ; i++) { // Sur les 3 premières lignes uniquement
         for (int j=0 ; j<4 ; j++) {
-            if(plateau[i][j] == plateau[i+1][j]) { // Si case identique à celle du dessous, fusion des deux
-                plateau[i][j] *= 2;
-				plateau[4][0] += plateau[i][j];	// Augmente le score
-                plateau[i+1][j]= 0;
+            if(jeu.plateau[i][j] == jeu.plateau[i+1][j]) { // Si case identique à celle du dessous, fusion des deux
+                jeu.plateau[i][j] *= 2;
+				jeu.score += jeu.plateau[i][j];	// Augmente le score
+                jeu.plateau[i+1][j]= 0;
                 launchscan = 1;
             } else { }
         }
     }
-    if (launchscan==1) { plateau = deplacementPartielHaut(plateau) ; } // remonte les cases si nécessaires
+    if (launchscan==1) { jeu.plateau = deplacementPartielHaut(jeu.plateau) ; } // remonte les cases si nécessaires
     else {} // else sans utilité, simplement pour plus de clareté
-    return plateau;
+	chargementHighscore(jeu.score) ; // Enregistre le score dans highscore si le meilleur score est battu
+    return jeu;
 }
 
-Matrice fusionDroite(Matrice plateau) {
+struct jeuGlobal fusionDroite(struct jeuGlobal jeu) {
     int launchscan = 0;
     for (int i=0 ; i<4 ; i++) {
         for (int j=3 ; j>0 ; j--) { // Depuis la dernière jusqu'à la 2nd colonne
-            if(plateau[i][j] == plateau[i][j-1]) { // Si case identique, fusion des deux
-                plateau[i][j] *= 2;
-				plateau[4][0] += plateau[i][j];	// Augmente le score
-                plateau[i][j-1]= 0;
+            if(jeu.plateau[i][j] == jeu.plateau[i][j-1]) { // Si case identique, fusion des deux
+                jeu.plateau[i][j] *= 2;
+				jeu.score += jeu.plateau[i][j];	// Augmente le score
+                jeu.plateau[i][j-1]= 0;
                 launchscan = 1;
             } else { }
         }
     }
-    if (launchscan==1) { plateau = deplacementPartielDroite(plateau) ; } // Bouger les cases ssi nécessaires
+    if (launchscan==1) { jeu.plateau = deplacementPartielDroite(jeu.plateau) ; } // Bouger les cases ssi nécessaires
     else { }
-    return plateau;
+	chargementHighscore(jeu.score) ; // Enregistre le score dans highscore si le meilleur score est battu
+    return jeu;
 }
 
-Matrice fusionBas(Matrice plateau) {
+struct jeuGlobal fusionBas(struct jeuGlobal jeu) {
     int launchscan = 0;
-    for (int i=3 ; i>0 ; i--) { // Depuis la dernière jusqu'à la 2nd ligne
+    for (int i=3 ; i>0 ; i--) { 
         for (int j=0 ; j<4 ; j++) {
-            if(plateau[i][j] == plateau[i-1][j]) { // Si case identique, fusion des deux
-                plateau[i][j] *= 2;
-				plateau[4][0] += plateau[i][j];	// Augmente le score
-                plateau[i-1][j]= 0;
+            if(jeu.plateau[i][j] == jeu.plateau[i-1][j]) { // Si case identique, fusion des deux
+                jeu.plateau[i][j] *= 2;
+				jeu.score += jeu.plateau[i][j];	// Augmente le score
+                jeu.plateau[i-1][j]= 0;
                 launchscan = 1 ;
             } else { }
         }
     }
-    if (launchscan==1) { plateau = deplacementPartielBas(plateau) ; } // Bouger les cases ssi nécessaires
+    if (launchscan==1) { jeu.plateau = deplacementPartielBas(jeu.plateau) ; } // Bouger les cases ssi nécessaires
     else {}
-    return plateau;
+	chargementHighscore(jeu.score) ; // Enregistre le score dans highscore si le meilleur score est battu	
+    return jeu;
 }
 
-Matrice fusionGauche(Matrice plateau) {
+struct jeuGlobal fusionGauche(struct jeuGlobal jeu) {
     int launchscan = 0;
     for (int i=0 ; i<4 ; i++) {
-        for (int j=0 ; j<4 ; j++) { // Depuis la dernière jusqu'à la 2nd colonne
-            if(plateau[i][j] == plateau[i][j+1]) { // Si case identique, fusion des deux
-                plateau[i][j] *= 2;
-				plateau[4][0] += plateau[i][j];	// Augmente le score
-                plateau[i][j+1]= 0;
+        for (int j=0 ; j<3 ; j++) { 
+            if(jeu.plateau[i][j] == jeu.plateau[i][j+1]) { // Si case identique, fusion des deux
+                jeu.plateau[i][j] *= 2;
+				jeu.score += jeu.plateau[i][j];	// Augmente le score
+                jeu.plateau[i][j+1]= 0;
                 launchscan = 1;
             } else { }
         }
     }
-    if (launchscan==1) { plateau = deplacementPartielGauche(plateau) ; } // Bouger les cases ssi nécessaires
+    if (launchscan==1) { jeu.plateau = deplacementPartielGauche(jeu.plateau) ; } // Bouger les cases ssi nécessaires
     else {}
-    return plateau;
+	chargementHighscore(jeu.score) ; // Enregistre le score dans highscore si le meilleur score est battu
+    return jeu;
 }
+
+
+
+
+
 
 
 
@@ -329,41 +347,57 @@ Matrice fusionGauche(Matrice plateau) {
 
 // --- MOUVEMENTS COMPLETS ---
 
-Matrice deplacementHaut(Matrice plateau) {
-    if ( mouvmtPossibleHaut(plateau) ) {
-        plateau = deplacementPartielHaut(plateau);
-        plateau = fusionHaut(plateau) ;
+struct jeuGlobal deplacementHaut(struct jeuGlobal jeu) {
+    if ( mouvmtPossibleHaut(jeu.plateau) ) {
+        jeu.plateau = deplacementPartielHaut(jeu.plateau);
+        jeu = fusionHaut(jeu) ;
     }
-    return plateau;
+    return jeu;
 }
 
-Matrice deplacementDroite(Matrice plateau) {
-    if ( mouvmtPossibleDroite(plateau) ) {
-        plateau = deplacementPartielDroite(plateau);
-        plateau = fusionDroite(plateau) ;
+struct jeuGlobal deplacementDroite(struct jeuGlobal jeu) {
+    if ( mouvmtPossibleDroite(jeu.plateau) ) {
+        jeu.plateau = deplacementPartielDroite(jeu.plateau);
+        jeu = fusionDroite(jeu) ;
     }
-    return plateau;
+    return jeu;
 }
 
-Matrice deplacementBas(Matrice plateau) {
-    if ( mouvmtPossibleBas(plateau) ) {
-        plateau = deplacementPartielBas(plateau);
-        plateau = fusionBas(plateau) ;
+struct jeuGlobal deplacementBas(struct jeuGlobal jeu) {
+    if ( mouvmtPossibleBas(jeu.plateau) ) {
+        jeu.plateau = deplacementPartielBas(jeu.plateau);
+        jeu = fusionBas(jeu) ;
     }
-    return plateau;
+    return jeu;
 }
 
-Matrice deplacementGauche(Matrice plateau) {
-    if ( mouvmtPossibleGauche(plateau) ) {
-        plateau = deplacementPartielGauche(plateau);
-        plateau = fusionGauche(plateau) ;
+struct jeuGlobal deplacementGauche(struct jeuGlobal jeu) {
+    if ( mouvmtPossibleGauche(jeu.plateau) ) {
+        jeu.plateau = deplacementPartielGauche(jeu.plateau);
+        jeu = fusionGauche(jeu) ;
     }
-    return plateau;
+    return jeu;
 }
 
 
 
+// --- ECRITURE DU HIGHSCORE DANS UN FICHIER EXTERNE ---
 
+void chargementHighscore(int scoretemp) {
+		
+		//On va chercher la valeur du highscore
+	ifstream highscore_file("Highscore") ;
+	int highscoretemp;
+	highscore_file >> highscoretemp;
+	highscore_file.close(); //On ferme le fichier
+
+	if (highscoretemp < scoretemp) {
+		ofstream highscore_file("Highscore") ; //Nom utilisable car il a déjà été close avant
+		highscore_file << scoretemp;	// On écrit le score actuel dans le fichier, ça le remplace
+		highscore_file.close(); // fermeture
+	} else {}
+	
+}
 
 
 
@@ -460,15 +494,6 @@ bool estGagne(Matrice plateau) {
     return false;
 }
 
-bool grillePleine(Matrice plateau){
-    for (int i=0 ; i<4 ; i++) {
-        for (int j=0 ; j<4 ; j++) {
-            if (plateau[i][j] > 0) {}
-            else { return false ; } // false si une case est vide
-        }
-    }
-    return true;
-}
 
 
 
@@ -569,15 +594,16 @@ Matrice randomspawn(Matrice plateau){
 
 Matrice plateauVide(){
     Matrice m;
-    m = { {0,0,0,0} , {0,0,0,0} , {0,0,0,0} , {0,0,0,0} , {0} };
+    m = { {0,0,0,0} , {0,0,0,0} , {0,0,0,0} , {0,0,0,0} };
     return m;
 }
 
-Matrice plateauInitial(Matrice plateau){
-    plateau = plateauVide();
-    plateau = randomspawn(plateau);
-    plateau = randomspawn(plateau);
-    return plateau;
+struct jeuGlobal plateauInitial(struct jeuGlobal jeu){
+    jeu.plateau = plateauVide();
+	jeu.score = 0;
+    jeu.plateau = randomspawn(jeu.plateau);
+    jeu.plateau = randomspawn(jeu.plateau);
+    return jeu;
 }
 
 
@@ -586,9 +612,9 @@ Matrice plateauInitial(Matrice plateau){
 
 // --- AFFICHAGE DU JEU ET PRISE DE DECISION ---
 
-void affichageJeu(Matrice plateau){
+void affichageJeu(struct jeuGlobal jeu){
 
-    affichePlateau(plateau) ;
+    affichePlateau(jeu) ;
 	
 	afficheCommandes();
 
@@ -602,72 +628,72 @@ bool commandeVerifier(int commande) {
     }
 }
 
-Matrice commandeExecuter(int commande, Matrice plateau) {
+struct jeuGlobal commandeExecuter(int commande, struct jeuGlobal jeu) {
             // -- RESTART --
     if (commande==114) {
-        plateau = plateauInitial(plateau);
+        jeu = plateauInitial(jeu);
 		mvprintw(18, 10, "Le jeu a ete relance. Enjoy :p") ;
-        return plateau;
+        return jeu;
     }  else {
 
             // -- HAUT --
     if (commande==259) { 
-        if ( not mouvmtPossibleHaut(plateau) ) { 
+        if ( not mouvmtPossibleHaut(jeu.plateau) ) { 
 			mvprintw(18, 10, "Mouvement impossible") ;
-            return plateau;
+            return jeu;
          } else { 
-        plateau = deplacementHaut(plateau);
-        plateau = randomspawn(plateau);
-        return plateau;
+        jeu = deplacementHaut(jeu);
+        jeu.plateau = randomspawn(jeu.plateau);
+        return jeu;
          }
     }
 
                 // -- DROITE --
     if (commande==261) {
-        if ( not mouvmtPossibleDroite(plateau) ) {
+        if ( not mouvmtPossibleDroite(jeu.plateau) ) {
 			mvprintw(18, 10, "Mouvement impossible") ;
-            return plateau;
+            return jeu;
         } else {
-        plateau = deplacementDroite(plateau);
-        plateau = randomspawn(plateau);
-        return plateau;
+        jeu = deplacementDroite(jeu);
+        jeu.plateau = randomspawn(jeu.plateau);
+        return jeu;
         }
     }
 
             // -- Bas --
     if (commande==258) {
-        if ( not mouvmtPossibleBas(plateau) ) {
+        if ( not mouvmtPossibleBas(jeu.plateau) ) {
 			mvprintw(18, 10, "Mouvement impossible") ;
-            return plateau;
+            return jeu;
         } else {
-        plateau = deplacementBas(plateau);
-        plateau = randomspawn(plateau);
-        return plateau;
+        jeu = deplacementBas(jeu);
+        jeu.plateau = randomspawn(jeu.plateau);
+        return jeu;
         }
     }
 
                 // -- GAUCHE --
     if (commande==260) {
-        if ( not mouvmtPossibleGauche(plateau) ) {
+        if ( not mouvmtPossibleGauche(jeu.plateau) ) {
 			mvprintw(18, 10, "Mouvement impossible") ;
-            return plateau;
+            return jeu;
         } else {
-        plateau = deplacementGauche(plateau);
-        plateau = randomspawn(plateau);
-        return plateau;
+        jeu = deplacementGauche(jeu);
+        jeu.plateau = randomspawn(jeu.plateau);
+        return jeu;
         }
     }
 
-    }  return plateau;
+    }  return jeu;
 }
 
 
-Matrice testsDeJeu(Matrice plateau) {
+struct jeuGlobal testsDeJeu(struct jeuGlobal jeu) {
 
-    if ( estGagne(plateau) ) {
+    if ( estGagne(jeu.plateau) ) {
 				//On affiche le plateau gagnant
 		clear();
-		affichageJeu(plateau);
+		affichageJeu(jeu);
 
 		mvprintw(18, 10, "OUE C GAGNEEEE... On recommence ? Appuyer sur R pour Restart") ;
 		
@@ -680,14 +706,14 @@ Matrice testsDeJeu(Matrice plateau) {
 		mvprintw(18, 10, "Le jeu a ete relance. Enjoy :p") ;
 
 			//On prépare un jeu relancé
-		plateau = plateauInitial(plateau) ;
+		jeu = plateauInitial(jeu) ;
 
-        return plateau;
+        return jeu;
     } else {
-    if ( estBloque(plateau) ) {
+    if ( estBloque(jeu.plateau) ) {
 			//On affiche le plateau perdant
 		clear();
-		affichageJeu(plateau);
+		affichageJeu(jeu);
 		mvprintw(18,10, "Partie perdue... :'( Appuyer sur R pour relancer une partie.") ;
 		
 			//On demande d'appuyer sur R
@@ -699,12 +725,12 @@ Matrice testsDeJeu(Matrice plateau) {
 		mvprintw(18, 10, "Le jeu a ete relance. Enjoy :p") ;
 
 			//On prépare un jeu relancé
-		plateau = plateauInitial(plateau) ;
+		jeu = plateauInitial(jeu) ;
 
-		return plateau;
+		return jeu;
     } else {
 		//Si la partie est ni perdue ni gagné, on fait rien
-    return plateau;}
+    return jeu;}
 
     }
 

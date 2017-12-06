@@ -15,7 +15,7 @@ typedef vector< vector<int> > Matrice;
 
 
 
-Matrice jouerUnCoup(Matrice plateau) {
+struct jeuGlobal jouerUnCoup(struct jeuGlobal jeu) {
 	int commande ;
 
 
@@ -25,7 +25,7 @@ Matrice jouerUnCoup(Matrice plateau) {
 
 			//affiche le plateau de jeu, score et msg d'erreur/de fin
 	clear();
-	affichageJeu(plateau);
+	affichageJeu(jeu);
 	//mvprintw(18, 10, commentaire) ; 	// FAIT PARTI DE L'ANCIENNE VERSION
 
 
@@ -36,11 +36,11 @@ Matrice jouerUnCoup(Matrice plateau) {
 
 		// On execute le mvmt et test si le jeu est gagne/perdu
 	} else {
-	plateau = commandeExecuter(commande, plateau);
-	plateau = testsDeJeu(plateau);
+	jeu = commandeExecuter(commande, jeu);
+	jeu = testsDeJeu(jeu);
 		refresh();
     }
-return plateau;
+return jeu;
 }
 
 
@@ -53,7 +53,7 @@ int main(){
 		// initialisations pour ncurses
 	initscr();
 	if ( !has_colors() ) {	// vérifie que les couleurs sont supportées
-		printw("Erreur : Le terminal ne supporte pas les couleurs.");
+		printw("Erreur : Le terminal ne supporte pas les couleurs.") ;
 		getch();
 		 return -1;
 	}
@@ -63,16 +63,20 @@ int main(){
         // Temps pour l'aléatoire
     srand( time(0) );
 
+	
+	
         // plateau de jeu
-    Matrice plateau;
-	plateau = plateauInitial(plateau);
+	struct jeuGlobal jeu;	// EXTENSIONS STRUCT
+    //Matrice plateau;		//Ancienne version
+	jeu = plateauInitial(jeu);
 	// pour tester le jeu gagnant :
-    //plateau = { {0,0,0,0} , {0,0,1024,0} , {0,1024,0,0} , {0,0,0,0} , {0} };
+    //jeu.plateau = { {0,0,0,0} , {0,0,1024,0} , {0,1024,0,0} , {0,0,0,0}  };
+    jeu.plateau = { {0,0,4,0} , {0,0,8,0} , {2,32,64,32} , {1024,512,128,64}  };
 
 	int boucleInfinie = 1;
 	while (boucleInfinie == 1) {
-		affichageJeu(plateau);
-	plateau = jouerUnCoup(plateau);
+		affichageJeu(jeu);
+	jeu = jouerUnCoup(jeu);
 	}
 
 	endwin();

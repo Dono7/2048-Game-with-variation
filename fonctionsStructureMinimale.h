@@ -1,4 +1,10 @@
 
+	// EXTENSION : STRUCT
+struct jeuGlobal {
+	Matrice plateau;
+	int score;
+};
+
 
 
 			//      ---- AFFICHAGES ----
@@ -10,7 +16,7 @@ void afficheCommandes() ;
  * @param tableau 2D, plateau de jeu
  * auncun return, seulement de l'affichage par cout
 **/
-void affichePlateau(Matrice plateau) ;
+void affichePlateau(struct jeuGlobal jeu) ;
 
 			// --- DEPLACEMENTS ---
 
@@ -27,21 +33,25 @@ Matrice deplacementPartielGauche(Matrice plateau) ;
  * @param plateau de jeu
  * @return le plateau après la fusion
 **/
-Matrice fusionHaut(Matrice plateau);
-Matrice fusionDroite(Matrice plateau);
-Matrice fusionBas(Matrice plateau);
-Matrice fusionGauche(Matrice plateau);
+struct jeuGlobal fusionHaut(struct jeuGlobal jeu);
+struct jeuGlobal fusionDroite(struct jeuGlobal jeu);
+struct jeuGlobal fusionBas(struct jeuGlobal jeu);
+struct jeuGlobal fusionGauche(struct jeuGlobal jeu);
 
 /** Combine à la fois le DeplacementPartiel et Fusion pour executer le mouvement total
  * @param le plateau de jeu avant le mouvement
  * @return le plateau de jeu après
 **/
-Matrice deplacementHaut(Matrice plateau) ;
-Matrice deplacementDroite(Matrice plateau) ;
-Matrice deplacementBas(Matrice plateau) ;
-Matrice deplacementGauche(Matrice plateau) ;
+struct jeuGlobal deplacementHaut(struct jeuGlobal jeu) ;
+struct jeuGlobal deplacementDroite(struct jeuGlobal jeu) ;
+struct jeuGlobal deplacementBas(struct jeuGlobal jeu) ;
+struct jeuGlobal deplacementGauche(struct jeuGlobal jeu) ;
 
-
+/** Ecrit le nouveau highscore dans le fichier externe si nécessaire
+ * @param Le nouveau score que l'on vient de faire
+ * @return un fichier externe qui contient le (nouveau) highscore
+ **/
+void chargementHighscore(int scoretemp);
 
 			// --- MOUVEMENT POSSIBLES ? ---
 
@@ -66,7 +76,6 @@ bool mouvmtPossibleGauche(Matrice plateau) ;
 **/
 bool estBloque(Matrice plateau) ;
 bool estGagne(Matrice plateau) ;
-bool grillePleine(Matrice plateau) ;		// utile ? ...
 
 /** Renvoie le nombre de cases vide du plateau
  * @param le plateau de jeu
@@ -95,7 +104,7 @@ Matrice randomspawn(Matrice plateau);
  * @return un plateau vide ou initial
 **/
 Matrice plateauVide();
-Matrice plateauInitial(Matrice plateau);
+struct jeuGlobal plateauInitial(struct jeuGlobal jeu);
 
 // --- AFFICHAGE DU JEU ET PRISE DE DECISION ---
 
@@ -103,7 +112,7 @@ Matrice plateauInitial(Matrice plateau);
  * @param plateau de jeu qui contient le score
  * aucun return, que de l'affichage par cout
 **/
-void affichageJeu(Matrice plateau);
+void affichageJeu(struct jeuGlobal jeu);
 
 /** Vérifie que le mouvement demandé est bien une des commandes existantes 
  * @param la commande en format string
@@ -115,24 +124,20 @@ bool commandeVerifier(int commande);
  * @param int correspondant à la touche pressée
  * @param le plateau de jeu à modifier eventuellement
  **/
-Matrice commandeExecuter(int commande, Matrice plateau) ;	///
+struct jeuGlobal commandeExecuter(int commande, struct jeuGlobal jeu) ;	///
 
 /** Test si le jeu est soit gagné soit bloqué et donc perdu
  * @param le plateau de jeu
  * @return un lien vers la fonction correspondante
  **/
-Matrice testsDeJeu(Matrice plateau) ;	
+struct jeuGlobal testsDeJeu(struct jeuGlobal jeu) ;	
 
 /** Affiche le jeu+score, prend la prochaine commande et reagit en fonction 
  * @param le plateau de jeu à afficher
  * @param commentaire en cas d'erreur ou de jeu gagné/perdu
  **/
-Matrice jouerUnCoup(Matrice plateau) ;
+struct jeuGlobal jouerUnCoup(struct jeuGlobal jeu) ;
 
-/** Affiche un message Partie perdue jusqu'à ce que l'utilisateur relance une partie
- * aucun param ou return
- **/
-void partiePerdue() ;
 
 
 

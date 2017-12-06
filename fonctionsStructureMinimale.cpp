@@ -169,13 +169,19 @@ void affichePlateau(struct jeuGlobal jeu) {
 
 
 void afficheCommandes(){
+			// Colorisation des commandes
+	init_pair(10, COLOR_GREEN, COLOR_BLACK) ;
+
 		//Le move ci-dessous est désactivé car il est géré par la fonction
 		//affichePlateau, voire quelques lignes plus haut
 	//move(14,0);	
+		attron( COLOR_PAIR(10) ); // Ecrire en magenta
 	printw("Ctrl+C : Quitter \n") ;
 	printw("R : Restart \n") ;
-	printw("Utiliser les fleches pour se deplacer") ;
-	move(17,0);
+	printw("Fleches : Se deplacer\n") ;
+	printw("Espace : Revenir en arrière") ;
+		attroff( COLOR_PAIR(10) ) ;
+	move(19,0);
 
 }
 
@@ -600,6 +606,7 @@ Matrice plateauVide(){
 
 struct jeuGlobal plateauInitial(struct jeuGlobal jeu){
     jeu.plateau = plateauVide();
+	jeu.back = jeu.plateau;
 	jeu.score = 0;
     jeu.plateau = randomspawn(jeu.plateau);
     jeu.plateau = randomspawn(jeu.plateau);
@@ -621,7 +628,7 @@ void affichageJeu(struct jeuGlobal jeu){
 }
 
 bool commandeVerifier(int commande) {
-    if (commande!=114 and commande!=258 and commande!=259 and commande!=260 and commande!=261) { // commande incorrecte
+    if (commande!=32 and commande!=114 and commande!=258 and commande!=259 and commande!=260 and commande!=261) { // commande incorrecte
         return false;
     } else {
     return true;
@@ -632,16 +639,31 @@ struct jeuGlobal commandeExecuter(int commande, struct jeuGlobal jeu) {
             // -- RESTART --
     if (commande==114) {
         jeu = plateauInitial(jeu);
-		mvprintw(18, 10, "Le jeu a ete relance. Enjoy :p") ;
+		mvprintw(19, 10, "Le jeu a ete relance. Enjoy :p") ;
         return jeu;
     }  else {
+
+
+            // -- BACK --
+    if (commande==32) { 
+		jeu.plateau = jeu.back;
+		jeu.score = jeu.score - (0.05 * jeu.score) ; // Baisse de 5%
+		mvprintw(19,10, "Retour en arrière effectue. Score baisse de 5 pourcents.") ;
+		mvprintw(20,10, "Ne pas continuer sous peine de baisser le score.") ;
+        return jeu;
+         } 
+    
+
+
 
             // -- HAUT --
     if (commande==259) { 
         if ( not mouvmtPossibleHaut(jeu.plateau) ) { 
-			mvprintw(18, 10, "Mouvement impossible") ;
+			mvprintw(19, 10, "Mouvement impossible") ;
             return jeu;
          } else { 
+			//Nouvelle extension : Back (ma variante)
+		jeu.back = jeu.plateau ;
         jeu = deplacementHaut(jeu);
         jeu.plateau = randomspawn(jeu.plateau);
         return jeu;
@@ -651,9 +673,11 @@ struct jeuGlobal commandeExecuter(int commande, struct jeuGlobal jeu) {
                 // -- DROITE --
     if (commande==261) {
         if ( not mouvmtPossibleDroite(jeu.plateau) ) {
-			mvprintw(18, 10, "Mouvement impossible") ;
+			mvprintw(19, 10, "Mouvement impossible") ;
             return jeu;
         } else {
+			//Nouvelle extension : Back (ma variante)
+		jeu.back = jeu.plateau ;
         jeu = deplacementDroite(jeu);
         jeu.plateau = randomspawn(jeu.plateau);
         return jeu;
@@ -663,9 +687,11 @@ struct jeuGlobal commandeExecuter(int commande, struct jeuGlobal jeu) {
             // -- Bas --
     if (commande==258) {
         if ( not mouvmtPossibleBas(jeu.plateau) ) {
-			mvprintw(18, 10, "Mouvement impossible") ;
+			mvprintw(19, 10, "Mouvement impossible") ;
             return jeu;
         } else {
+			//Nouvelle extension : Back (ma variante)
+		jeu.back = jeu.plateau ;
         jeu = deplacementBas(jeu);
         jeu.plateau = randomspawn(jeu.plateau);
         return jeu;
@@ -675,9 +701,11 @@ struct jeuGlobal commandeExecuter(int commande, struct jeuGlobal jeu) {
                 // -- GAUCHE --
     if (commande==260) {
         if ( not mouvmtPossibleGauche(jeu.plateau) ) {
-			mvprintw(18, 10, "Mouvement impossible") ;
+			mvprintw(19, 10, "Mouvement impossible") ;
             return jeu;
         } else {
+			//Nouvelle extension : Back (ma variante)
+		jeu.back = jeu.plateau ;
         jeu = deplacementGauche(jeu);
         jeu.plateau = randomspawn(jeu.plateau);
         return jeu;
@@ -695,7 +723,7 @@ struct jeuGlobal testsDeJeu(struct jeuGlobal jeu) {
 		clear();
 		affichageJeu(jeu);
 
-		mvprintw(18, 10, "OUE C GAGNEEEE... On recommence ? Appuyer sur R pour Restart") ;
+		mvprintw(19, 10, "OUE C GAGNEEEE... On recommence ? Appuyer sur R pour Restart") ;
 		
 			//On demande d'appuyer sur R
 		int c=0;
@@ -703,7 +731,7 @@ struct jeuGlobal testsDeJeu(struct jeuGlobal jeu) {
 			c = getch();
 		}
 		clear();
-		mvprintw(18, 10, "Le jeu a ete relance. Enjoy :p") ;
+		mvprintw(19, 10, "Le jeu a ete relance. Enjoy :p") ;
 
 			//On prépare un jeu relancé
 		jeu = plateauInitial(jeu) ;
@@ -714,7 +742,7 @@ struct jeuGlobal testsDeJeu(struct jeuGlobal jeu) {
 			//On affiche le plateau perdant
 		clear();
 		affichageJeu(jeu);
-		mvprintw(18,10, "Partie perdue... :'( Appuyer sur R pour relancer une partie.") ;
+		mvprintw(19,10, "Partie perdue... :'( Appuyer sur R pour relancer une partie.") ;
 		
 			//On demande d'appuyer sur R
 		int c=0;
@@ -722,7 +750,7 @@ struct jeuGlobal testsDeJeu(struct jeuGlobal jeu) {
 			c = getch();
 		}
 		clear();
-		mvprintw(18, 10, "Le jeu a ete relance. Enjoy :p") ;
+		mvprintw(19, 10, "Le jeu a ete relance. Enjoy :p") ;
 
 			//On prépare un jeu relancé
 		jeu = plateauInitial(jeu) ;

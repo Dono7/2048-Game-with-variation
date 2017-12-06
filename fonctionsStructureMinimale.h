@@ -3,7 +3,9 @@
 struct jeuGlobal {
 	Matrice plateau;
 	int score;
+	Matrice back;
 };
+
 
 
 

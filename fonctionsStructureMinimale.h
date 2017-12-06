@@ -99,6 +99,14 @@ bool eventProba1surN(float n) ;
 **/
 Matrice randomspawn(Matrice plateau);
 
+/** Agit sur le plateau par les règles de ma variante (voir doc annexe)
+ * @param le plateau de jeu après avoir joué un coup
+ * @return le plateau avec (ou pas) l'augmentation/baisse aléatoire
+**/
+Matrice baisseOuAug(Matrice plateau);
+
+
+
 // --- INITIALISATION DU JEU ---
 
 /** Créer un plateau vide ou initial (avec 2 nombres aléatoires)

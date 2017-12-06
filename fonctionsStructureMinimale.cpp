@@ -585,6 +585,75 @@ Matrice randomspawn(Matrice plateau){
 
 
 
+Matrice baisseOuAug(Matrice plateau) { 
+	
+				// --- BAISSE ---
+	if( eventProba1surN(20) ) { // 4% de chance de se produire
+	
+		// Choix et coordonnées de la case
+		int cord_x = rand() % 4; 
+		int cord_y = rand() % 4;
+		int numCase = cord_x * 4 + cord_y + 1 ;
+		int valeur = plateau[cord_x][cord_y] ;
+
+		if (valeur == 0) {		//
+			mvprintw(21,10,"Quelle chance ! Ta case %d aurait du baisser...", numCase);
+			mvprintw(22,10,"Mais elle est deja vide. Tu y echappes pour cette fois.");
+		}
+		if (valeur < 32 and valeur!=0) {		//
+			plateau[cord_x][cord_y] = 0;
+			mvprintw(21,10,"Mince ! Ta case %d a ete supprimee...", numCase);
+			mvprintw(22,10,"C'est pas trop grave, elle valait %d",valeur);
+		}
+		if (valeur == 32 or valeur == 64) {
+			plateau[cord_x][cord_y] = 8;
+			mvprintw(21,10,"Aie aie aie ! Ta case %d vient de baisser...", numCase);
+			mvprintw(22,10,"Elle passe de %d a 8 :(", valeur);
+		}
+		if (valeur > 64) {
+			plateau[cord_x][cord_y] = valeur / 2;
+			mvprintw(21,10,"Mince ! Ta case %d a divisee par 2...", numCase);
+			mvprintw(22,10,"Elle valait %d... ça doit faire mal au coeur",valeur);
+		} 
+	} else {
+		
+				// --- AUGMENTATION ---
+	if( eventProba1surN(17) ) { //6% de chance de se produire
+
+			// Choix et coordonnées de la case
+		int cord_x = rand() % 4; 
+		int cord_y = rand() % 4;
+		int numCase = cord_x * 4 + cord_y +1 ; //Conversion de coordonnées en numéro
+		int valeur = plateau[cord_x][cord_y] ;
+		
+		if (valeur == 0) {						//
+			mvprintw(21,10,"Pas de chance ! Ta case %d aurait pu augmenter...", numCase);
+			mvprintw(22,10,"Mais elle est vide. Dommage...");
+		}
+		if (valeur < 32 and valeur !=0) {		//
+			plateau[cord_x][cord_y] = 32;
+			mvprintw(21,10,"Cool ! Ta case %d a ete augmentee !", numCase);
+			mvprintw(22,10,"Elle passe de %d a 32... :)",valeur);
+		}
+		if (valeur == 32 or valeur == 64) {		//
+			plateau[cord_x][cord_y] = 128;
+			mvprintw(21,10,"Yes ! Ta case %d vient d'augmenter !", numCase);
+			mvprintw(22,10,"Elle passe de %d a 128 :D", valeur);
+		}
+		if (valeur > 64 and valeur < 1024) {	//
+			plateau[cord_x][cord_y] *= 2;
+			mvprintw(21,10,"Yeeees ! Ta case %d a DOUBLE !", numCase);
+			mvprintw(22,10,"Elle valait deja %d, et maintenant c'est un %d !\nOn se rapproche de la victoire :)",valeur, 2*valeur);
+		} 
+		if (valeur == 1024) {
+			mvprintw(21,10,"Pas de chance ! Ta case %d aurait du augmenter...", numCase);
+			mvprintw(22,10,"Mais elle vaut deja 1024. T'as pas l'air d'avoir besoin d'aide... :p");
+		}
+	} // fin d'augmentation	
+	} // fin du else
+	return plateau;
+}
+
 
 
 
@@ -644,7 +713,7 @@ struct jeuGlobal commandeExecuter(int commande, struct jeuGlobal jeu) {
     }  else {
 
 
-            // -- BACK --
+            // -- BACK -- // Ma variante
     if (commande==32) { 
 		jeu.plateau = jeu.back;
 		jeu.score = jeu.score - (0.05 * jeu.score) ; // Baisse de 5%
@@ -666,6 +735,7 @@ struct jeuGlobal commandeExecuter(int commande, struct jeuGlobal jeu) {
 		jeu.back = jeu.plateau ;
         jeu = deplacementHaut(jeu);
         jeu.plateau = randomspawn(jeu.plateau);
+		jeu.plateau = baisseOuAug(jeu.plateau) ; //Ma variante : Baisse ou Aug aléatoire
         return jeu;
          }
     }
@@ -680,6 +750,7 @@ struct jeuGlobal commandeExecuter(int commande, struct jeuGlobal jeu) {
 		jeu.back = jeu.plateau ;
         jeu = deplacementDroite(jeu);
         jeu.plateau = randomspawn(jeu.plateau);
+		jeu.plateau = baisseOuAug(jeu.plateau) ; //Ma variante : Baisse ou Aug aléatoire
         return jeu;
         }
     }
@@ -694,6 +765,7 @@ struct jeuGlobal commandeExecuter(int commande, struct jeuGlobal jeu) {
 		jeu.back = jeu.plateau ;
         jeu = deplacementBas(jeu);
         jeu.plateau = randomspawn(jeu.plateau);
+		jeu.plateau = baisseOuAug(jeu.plateau) ; //Ma variante : Baisse ou Aug aléatoire
         return jeu;
         }
     }
@@ -708,6 +780,7 @@ struct jeuGlobal commandeExecuter(int commande, struct jeuGlobal jeu) {
 		jeu.back = jeu.plateau ;
         jeu = deplacementGauche(jeu);
         jeu.plateau = randomspawn(jeu.plateau);
+		jeu.plateau = baisseOuAug(jeu.plateau) ; //Ma variante : Baisse ou Aug aléatoire
         return jeu;
         }
     }

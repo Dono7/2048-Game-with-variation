@@ -73,6 +73,8 @@ int main(){
     //jeu.plateau = { {0,0,0,0} , {0,0,1024,0} , {0,1024,0,0} , {0,0,0,0}  };
     //jeu.plateau = { {0,0,4,0} , {0,0,8,0} , {2,32,64,32} , {1024,512,128,64}  };
 
+	
+	
 	int boucleInfinie = 1;
 	while (boucleInfinie == 1) {
 		affichageJeu(jeu);

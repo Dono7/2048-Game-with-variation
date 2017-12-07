@@ -6,7 +6,7 @@
 #include <ctime>        // srand( time(0) ) ;
 #include <cstdlib>      // rand
 using namespace std;
-typedef vector< vector<int> > Matrice;
+typedef vector< vector<int> > Matrice; 
 
 // PENSER A METTRE "srand(time(0))" dans main();
 
@@ -28,10 +28,9 @@ struct jeuGlobal jouerUnCoup(struct jeuGlobal jeu) {
 	affichageJeu(jeu);
 	//mvprintw(18, 10, commentaire) ; 	// FAIT PARTI DE L'ANCIENNE VERSION
 
-
 		// On vérifie que la commande rentrée existe
 	if ( not commandeVerifier(commande) ) {
-        mvprintw(18,10,"Commande invalide");
+        mvprintw(20,10,"Commande invalide");
 		refresh();
 
 		// On execute le mvmt et test si le jeu est gagne/perdu
@@ -39,6 +38,7 @@ struct jeuGlobal jouerUnCoup(struct jeuGlobal jeu) {
 	jeu = commandeExecuter(commande, jeu);
 	jeu = testsDeJeu(jeu);
 		refresh();
+
     }
 return jeu;
 }
@@ -61,7 +61,7 @@ int main(){
 	keypad(stdscr, TRUE); //active les flèches du clavier
 
         // Temps pour l'aléatoire
-    srand( time(0) );
+    srand( time(0) ) ;
 
 	
 	

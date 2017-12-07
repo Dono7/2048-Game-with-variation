@@ -1,12 +1,14 @@
 
 	// EXTENSION : STRUCT
 struct jeuGlobal {
-	Matrice plateau;
+	Matrice plateau; //plateau de jeu de base
 	int score;
-	Matrice back;
+	Matrice back; //pour revenir un coup en arrière
+	int compteur40; //Ma variante : Pour une suppression tous les 40 coups
 };
 
-
+//emplacement temp
+struct jeuGlobal suppression40(struct jeuGlobal jeu) ;
 
 
 			//      ---- AFFICHAGES ----

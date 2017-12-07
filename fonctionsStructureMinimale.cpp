@@ -13,7 +13,7 @@
         -- RANDOM SPAWN (aleatoires)
         -- INITIALISATION DU JEU
         -- AFFICHAGE DU JEU ET PRISE DE DECISIONS
-
+		-- MA VARIANTE
 **/
 
 
@@ -168,20 +168,30 @@ void affichePlateau(struct jeuGlobal jeu) {
 
 
 
-void afficheCommandes(){
+void afficheCommandes(int compteur40){
 			// Colorisation des commandes
 	init_pair(10, COLOR_GREEN, COLOR_BLACK) ;
+	init_pair(11, COLOR_RED, COLOR_BLACK) ;
 
 		//Le move ci-dessous est désactivé car il est géré par la fonction
 		//affichePlateau, voire quelques lignes plus haut
 	//move(14,0);	
-		attron( COLOR_PAIR(10) ); // Ecrire en magenta
+		attron( COLOR_PAIR(10) ); // Ecrire en vert
 	printw("Ctrl+C : Quitter \n") ;
 	printw("R : Restart \n") ;
 	printw("Fleches : Se deplacer\n") ;
-	printw("Espace : Revenir en arrière") ;
+	printw("Espace : Revenir en arrière\n") ;
 		attroff( COLOR_PAIR(10) ) ;
-	move(19,0);
+	if( compteur40 > 69 ) {
+		attron( COLOR_PAIR(10) );
+		printw("E : Supprimer une case");
+		attroff( COLOR_PAIR(10) ) ;
+	} else {
+		attron( COLOR_PAIR(11) );
+		printw("E : Supprimer une case");
+		attroff( COLOR_PAIR(11) ) ;		
+	}
+	move(20,0);
 
 }
 
@@ -387,33 +397,6 @@ struct jeuGlobal deplacementGauche(struct jeuGlobal jeu) {
 
 
 
-// --- ECRITURE DU HIGHSCORE DANS UN FICHIER EXTERNE ---
-
-void chargementHighscore(int scoretemp) {
-		
-		//On va chercher la valeur du highscore
-	ifstream highscore_file("Highscore") ;
-	int highscoretemp;
-	highscore_file >> highscoretemp;
-	highscore_file.close(); //On ferme le fichier
-
-	if (highscoretemp < scoretemp) {
-		ofstream highscore_file("Highscore") ; //Nom utilisable car il a déjà été close avant
-		highscore_file << scoretemp;	// On écrit le score actuel dans le fichier, ça le remplace
-		highscore_file.close(); // fermeture
-	} else {}
-	
-}
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -585,75 +568,6 @@ Matrice randomspawn(Matrice plateau){
 
 
 
-Matrice baisseOuAug(Matrice plateau) { 
-	
-				// --- BAISSE ---
-	if( eventProba1surN(20) ) { // 4% de chance de se produire
-	
-		// Choix et coordonnées de la case
-		int cord_x = rand() % 4; 
-		int cord_y = rand() % 4;
-		int numCase = cord_x * 4 + cord_y + 1 ;
-		int valeur = plateau[cord_x][cord_y] ;
-
-		if (valeur == 0) {		//
-			mvprintw(21,10,"Quelle chance ! Ta case %d aurait du baisser...", numCase);
-			mvprintw(22,10,"Mais elle est deja vide. Tu y echappes pour cette fois.");
-		}
-		if (valeur < 32 and valeur!=0) {		//
-			plateau[cord_x][cord_y] = 0;
-			mvprintw(21,10,"Mince ! Ta case %d a ete supprimee...", numCase);
-			mvprintw(22,10,"C'est pas trop grave, elle valait %d",valeur);
-		}
-		if (valeur == 32 or valeur == 64) {
-			plateau[cord_x][cord_y] = 8;
-			mvprintw(21,10,"Aie aie aie ! Ta case %d vient de baisser...", numCase);
-			mvprintw(22,10,"Elle passe de %d a 8 :(", valeur);
-		}
-		if (valeur > 64) {
-			plateau[cord_x][cord_y] = valeur / 2;
-			mvprintw(21,10,"Mince ! Ta case %d a divisee par 2...", numCase);
-			mvprintw(22,10,"Elle valait %d... ça doit faire mal au coeur",valeur);
-		} 
-	} else {
-		
-				// --- AUGMENTATION ---
-	if( eventProba1surN(17) ) { //6% de chance de se produire
-
-			// Choix et coordonnées de la case
-		int cord_x = rand() % 4; 
-		int cord_y = rand() % 4;
-		int numCase = cord_x * 4 + cord_y +1 ; //Conversion de coordonnées en numéro
-		int valeur = plateau[cord_x][cord_y] ;
-		
-		if (valeur == 0) {						//
-			mvprintw(21,10,"Pas de chance ! Ta case %d aurait pu augmenter...", numCase);
-			mvprintw(22,10,"Mais elle est vide. Dommage...");
-		}
-		if (valeur < 32 and valeur !=0) {		//
-			plateau[cord_x][cord_y] = 32;
-			mvprintw(21,10,"Cool ! Ta case %d a ete augmentee !", numCase);
-			mvprintw(22,10,"Elle passe de %d a 32... :)",valeur);
-		}
-		if (valeur == 32 or valeur == 64) {		//
-			plateau[cord_x][cord_y] = 128;
-			mvprintw(21,10,"Yes ! Ta case %d vient d'augmenter !", numCase);
-			mvprintw(22,10,"Elle passe de %d a 128 :D", valeur);
-		}
-		if (valeur > 64 and valeur < 1024) {	//
-			plateau[cord_x][cord_y] *= 2;
-			mvprintw(21,10,"Yeeees ! Ta case %d a DOUBLE !", numCase);
-			mvprintw(22,10,"Elle valait deja %d, et maintenant c'est un %d !\nOn se rapproche de la victoire :)",valeur, 2*valeur);
-		} 
-		if (valeur == 1024) {
-			mvprintw(21,10,"Pas de chance ! Ta case %d aurait du augmenter...", numCase);
-			mvprintw(22,10,"Mais elle vaut deja 1024. T'as pas l'air d'avoir besoin d'aide... :p");
-		}
-	} // fin d'augmentation	
-	} // fin du else
-	return plateau;
-}
-
 
 
 
@@ -669,14 +583,15 @@ Matrice baisseOuAug(Matrice plateau) {
 
 Matrice plateauVide(){
     Matrice m;
-    m = { {0,0,0,0} , {0,0,0,0} , {0,0,0,0} , {0,0,0,0} };
-    return m;
+    m = { {0,0,0,0} , {0,0,0,0} , {0,0,0,0} , {0,0,0,0} } ;
+    return m ;
 }
 
 struct jeuGlobal plateauInitial(struct jeuGlobal jeu){
     jeu.plateau = plateauVide();
 	jeu.back = jeu.plateau;
 	jeu.score = 0;
+	jeu.compteur40 = 0;
     jeu.plateau = randomspawn(jeu.plateau);
     jeu.plateau = randomspawn(jeu.plateau);
     return jeu;
@@ -692,12 +607,12 @@ void affichageJeu(struct jeuGlobal jeu){
 
     affichePlateau(jeu) ;
 	
-	afficheCommandes();
+	afficheCommandes(jeu.compteur40);
 
 }
 
 bool commandeVerifier(int commande) {
-    if (commande!=32 and commande!=114 and commande!=258 and commande!=259 and commande!=260 and commande!=261) { // commande incorrecte
+    if (commande!=32 and commande!=101 and commande!=114 and commande!=258 and commande!=259 and commande!=260 and commande!=261) { // commande incorrecte
         return false;
     } else {
     return true;
@@ -710,7 +625,7 @@ struct jeuGlobal commandeExecuter(int commande, struct jeuGlobal jeu) {
         jeu = plateauInitial(jeu);
 		mvprintw(19, 10, "Le jeu a ete relance. Enjoy :p") ;
         return jeu;
-    }  else {
+    }  
 
 
             // -- BACK -- // Ma variante
@@ -723,6 +638,20 @@ struct jeuGlobal commandeExecuter(int commande, struct jeuGlobal jeu) {
          } 
     
 
+            // -- SUPPRESSION -- // Ma variante
+    if (commande==101) { 
+		if (jeu.compteur40 < 70) {
+			mvprintw(19,10, "Tu ne peux utiliser la suppression que tous les 70 coups");
+			mvprintw(20,10, "Reessayes dans %d coups", 70-jeu.compteur40);
+		} else {
+			jeu.back = jeu.plateau;
+			jeu = suppression40(jeu);
+			
+		}
+		return jeu;
+        }
+
+		
 
 
             // -- HAUT --
@@ -736,6 +665,7 @@ struct jeuGlobal commandeExecuter(int commande, struct jeuGlobal jeu) {
         jeu = deplacementHaut(jeu);
         jeu.plateau = randomspawn(jeu.plateau);
 		jeu.plateau = baisseOuAug(jeu.plateau) ; //Ma variante : Baisse ou Aug aléatoire
+		jeu.compteur40 ++; //Ma variante : Suppression tous les 40 coups
         return jeu;
          }
     }
@@ -751,6 +681,7 @@ struct jeuGlobal commandeExecuter(int commande, struct jeuGlobal jeu) {
         jeu = deplacementDroite(jeu);
         jeu.plateau = randomspawn(jeu.plateau);
 		jeu.plateau = baisseOuAug(jeu.plateau) ; //Ma variante : Baisse ou Aug aléatoire
+		jeu.compteur40 ++; //Ma variante : Suppression tous les 40 coups
         return jeu;
         }
     }
@@ -766,6 +697,7 @@ struct jeuGlobal commandeExecuter(int commande, struct jeuGlobal jeu) {
         jeu = deplacementBas(jeu);
         jeu.plateau = randomspawn(jeu.plateau);
 		jeu.plateau = baisseOuAug(jeu.plateau) ; //Ma variante : Baisse ou Aug aléatoire
+		jeu.compteur40 ++; //Ma variante : Suppression tous les 40 coups
         return jeu;
         }
     }
@@ -781,11 +713,12 @@ struct jeuGlobal commandeExecuter(int commande, struct jeuGlobal jeu) {
         jeu = deplacementGauche(jeu);
         jeu.plateau = randomspawn(jeu.plateau);
 		jeu.plateau = baisseOuAug(jeu.plateau) ; //Ma variante : Baisse ou Aug aléatoire
+		jeu.compteur40 ++; //Ma variante : Suppression tous les 40 coups
         return jeu;
         }
     }
 
-    }  return jeu;
+    return jeu;
 }
 
 
@@ -836,6 +769,186 @@ struct jeuGlobal testsDeJeu(struct jeuGlobal jeu) {
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+/*************************************/
+
+//      ---- MA VARIANTE ----
+
+
+
+void chargementHighscore(int scoretemp) {
+		
+		//On va chercher la valeur du highscore
+	ifstream highscore_file("Highscore") ;
+	int highscoretemp;
+	highscore_file >> highscoretemp;
+	highscore_file.close(); //On ferme le fichier
+
+	if (highscoretemp < scoretemp) {
+		ofstream highscore_file("Highscore") ; //Nom utilisable car il a déjà été close avant
+		highscore_file << scoretemp;	// On écrit le score actuel dans le fichier, ça le remplace
+		highscore_file.close(); // fermeture
+	} else {}
+	
+}
+
+
+
+Matrice baisseOuAug(Matrice plateau) { 
+	
+				// --- BAISSE ---
+	if( eventProba1surN(50) ) { // 2% de chance de se produire
+	
+		// Choix et coordonnées de la case
+		int cord_x = rand() % 4; 
+		int cord_y = rand() % 4;
+		int numCase = cord_x * 4 + cord_y + 1 ;
+		int valeur = plateau[cord_x][cord_y] ;
+
+		if (valeur == 0) {		//
+			mvprintw(21,10,"Quelle chance ! Ta case %d aurait du baisser...", numCase);
+			mvprintw(22,10,"Mais elle est deja vide. Tu y echappes pour cette fois.");
+		}
+		if (valeur < 32 and valeur!=0) {		//
+			plateau[cord_x][cord_y] = 0;
+			mvprintw(21,10,"Mince ! Ta case %d a ete supprimee...", numCase);
+			mvprintw(22,10,"C'est pas trop grave, elle valait %d",valeur);
+		}
+		if (valeur == 32 or valeur == 64) {
+			plateau[cord_x][cord_y] = 8;
+			mvprintw(21,10,"Aie aie aie ! Ta case %d vient de baisser...", numCase);
+			mvprintw(22,10,"Elle passe de %d a 8 :(", valeur);
+		}
+		if (valeur > 64) {
+			plateau[cord_x][cord_y] = valeur / 2;
+			mvprintw(21,10,"Mince ! Ta case %d a divisee par 2...", numCase);
+			mvprintw(22,10,"Elle valait %d... ça doit faire mal au coeur",valeur);
+		} 
+	} else {
+		
+				// --- AUGMENTATION ---
+	if( eventProba1surN(25) ) { //4% de chance de se produire
+
+			// Choix et coordonnées de la case
+		int cord_x = rand() % 4; 
+		int cord_y = rand() % 4;
+		int numCase = cord_x * 4 + cord_y +1 ; //Conversion de coordonnées en numéro
+		int valeur = plateau[cord_x][cord_y] ;
+		
+		if (valeur == 0) {						//
+			mvprintw(21,10,"Pas de chance ! Ta case %d aurait pu augmenter...", numCase);
+			mvprintw(22,10,"Mais elle est vide. Dommage...");
+		}
+		if (valeur < 32 and valeur !=0) {		//
+			plateau[cord_x][cord_y] = 32;
+			mvprintw(21,10,"Cool ! Ta case %d a ete augmentee !", numCase);
+			mvprintw(22,10,"Elle passe de %d a 32... :)",valeur);
+		}
+		if (valeur == 32 or valeur == 64) {		//
+			plateau[cord_x][cord_y] = 128;
+			mvprintw(21,10,"Yes ! Ta case %d vient d'augmenter !", numCase);
+			mvprintw(22,10,"Elle passe de %d a 128 :D", valeur);
+		}
+		if (valeur > 64 and valeur < 1024) {	//
+			plateau[cord_x][cord_y] *= 2;
+			mvprintw(21,10,"Yeeees ! Ta case %d a DOUBLE !", numCase);
+			mvprintw(22,10,"Elle valait deja %d, et maintenant c'est un %d !\nOn se rapproche de la victoire :)",valeur, 2*valeur);
+		} 
+		if (valeur == 1024) {
+			mvprintw(21,10,"Pas de chance ! Ta case %d aurait du augmenter...", numCase);
+			mvprintw(22,10,"Mais elle vaut deja 1024. T'as pas l'air d'avoir besoin d'aide... :p");
+		}
+	} // fin d'augmentation	
+	} // fin du else
+	return plateau;
+}
+
+
+
+
+struct jeuGlobal suppression40(struct jeuGlobal jeu) {
+	//Affichage actualisé du jeu
+	clear();
+	affichageJeu(jeu);
+	refresh();
+	
+	
+	
+		//On réinitialise le compteur
+	jeu.compteur40 = 0 ;
+	int numCase ; //numéro qui sera suppr
+	int c1 = -1; //Commande entrée par le joueur
+	int c2 = -1; //deuxième chiffre
+	int confirmation;
+	
+	mvprintw(24,0,"Tu as le droit de supprimer une case... Rentre son numero :");
+	mvprintw(25,0,"Coin Haut Gauche : 01 / Haut Droite : 04 / Bas Droite : 16 / 00 : Ne supprime rien") ;
+	mvprintw(26,0,"Tu as choisi de supprimer la case : ") ;
+	
+		//Demande les valeurs au clavier
+	while (c1 != 48 and c1 !=49 ) {
+		c1 = getch();	
+	}	
+	while ( c2 < 48 or c2 > 57 ) {
+		c2 = getch();
+	}
+	
+		// Affiche la valeur et demande confirmation
+	if (c1 == 48) {
+		numCase = c2 - 48;
+	} else {
+		numCase = c2 - 38;	}
+	
+	//Demande confirmation
+	if (numCase == 0) {
+		mvprintw(26,0,"Tu as choisi de ne rien supprimer.");
+	} else {	
+		mvprintw(26,36,"%d ...", numCase) ;
+	}
+	mvprintw(27,0,"Pour confirmer, appuies sur Entrer (ou sur autre touche pour redemander la valeur)") ;
+	refresh();
+	confirmation = getch();
+	if (confirmation != 10) {
+		jeu = suppression40(jeu);
+	} else { 
+	
+		// Conversion en coordonnées et suppression de case
+	if(numCase == 0) {
+		return jeu;
+	} else {
+		numCase = numCase - 1 ;
+		int y = numCase % 4 ;
+		int x = numCase / 4 ;
+		jeu.plateau[x][y] = 0 ; }
+	} // fin confirmation 
+
+	//Affichage actualisé du jeu
+	clear();
+	affichageJeu(jeu);
+	refresh();
+
+	return jeu;
+}
+
+
+
+
+
+
+
+
+
 
 
 

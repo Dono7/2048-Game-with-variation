@@ -807,6 +807,10 @@ void chargementHighscore(int scoretemp) {
 
 Matrice baisseOuAug(Matrice plateau) { 
 	
+	init_pair(15, COLOR_BLACK, COLOR_WHITE); 	// 15 Neutre
+	init_pair(16, COLOR_WHITE, COLOR_RED); 		// 16 Bad
+	init_pair(17, COLOR_WHITE, COLOR_GREEN); 	// 17 cool
+
 				// --- BAISSE ---
 	if( eventProba1surN(50) ) { // 2% de chance de se produire
 	
@@ -816,24 +820,32 @@ Matrice baisseOuAug(Matrice plateau) {
 		int numCase = cord_x * 4 + cord_y + 1 ;
 		int valeur = plateau[cord_x][cord_y] ;
 
-		if (valeur == 0) {		//
+		if (valeur == 0) {	
+				attron(COLOR_PAIR(15) ) ;
 			mvprintw(21,10,"Quelle chance ! Ta case %d aurait du baisser...", numCase);
 			mvprintw(22,10,"Mais elle est deja vide. Tu y echappes pour cette fois.");
+				attroff(COLOR_PAIR(15) ) ;
 		}
-		if (valeur < 32 and valeur!=0) {		//
+		if (valeur < 32 and valeur!=0) {
+				attron(COLOR_PAIR(16) ) ;
 			plateau[cord_x][cord_y] = 0;
 			mvprintw(21,10,"Mince ! Ta case %d a ete supprimee...", numCase);
 			mvprintw(22,10,"C'est pas trop grave, elle valait %d",valeur);
+				attroff(COLOR_PAIR(16) ) ;
 		}
 		if (valeur == 32 or valeur == 64) {
+				attron(COLOR_PAIR(16) ) ;
 			plateau[cord_x][cord_y] = 8;
 			mvprintw(21,10,"Aie aie aie ! Ta case %d vient de baisser...", numCase);
 			mvprintw(22,10,"Elle passe de %d a 8 :(", valeur);
+				attroff(COLOR_PAIR(16) ) ;
 		}
 		if (valeur > 64) {
+				attron(COLOR_PAIR(16) ) ;
 			plateau[cord_x][cord_y] = valeur / 2;
 			mvprintw(21,10,"Mince ! Ta case %d a divisee par 2...", numCase);
 			mvprintw(22,10,"Elle valait %d... ça doit faire mal au coeur",valeur);
+				attroff(COLOR_PAIR(16) ) ;
 		} 
 	} else {
 		
@@ -847,27 +859,37 @@ Matrice baisseOuAug(Matrice plateau) {
 		int valeur = plateau[cord_x][cord_y] ;
 		
 		if (valeur == 0) {						//
+				attron(COLOR_PAIR(15) ) ;
 			mvprintw(21,10,"Pas de chance ! Ta case %d aurait pu augmenter...", numCase);
 			mvprintw(22,10,"Mais elle est vide. Dommage...");
+				attroff(COLOR_PAIR(15) ) ;
 		}
 		if (valeur < 32 and valeur !=0) {		//
+				attron(COLOR_PAIR(17) ) ;
 			plateau[cord_x][cord_y] = 32;
 			mvprintw(21,10,"Cool ! Ta case %d a ete augmentee !", numCase);
 			mvprintw(22,10,"Elle passe de %d a 32... :)",valeur);
+				attroff(COLOR_PAIR(17) ) ;
 		}
 		if (valeur == 32 or valeur == 64) {		//
+				attron(COLOR_PAIR(17) ) ;
 			plateau[cord_x][cord_y] = 128;
 			mvprintw(21,10,"Yes ! Ta case %d vient d'augmenter !", numCase);
 			mvprintw(22,10,"Elle passe de %d a 128 :D", valeur);
+				attroff(COLOR_PAIR(17) ) ;
 		}
 		if (valeur > 64 and valeur < 1024) {	//
+				attron(COLOR_PAIR(17) ) ;
 			plateau[cord_x][cord_y] *= 2;
 			mvprintw(21,10,"Yeeees ! Ta case %d a DOUBLE !", numCase);
 			mvprintw(22,10,"Elle valait deja %d, et maintenant c'est un %d !\nOn se rapproche de la victoire :)",valeur, 2*valeur);
+				attroff(COLOR_PAIR(17) ) ;
 		} 
 		if (valeur == 1024) {
+				attron(COLOR_PAIR(15) ) ;
 			mvprintw(21,10,"Pas de chance ! Ta case %d aurait du augmenter...", numCase);
 			mvprintw(22,10,"Mais elle vaut deja 1024. T'as pas l'air d'avoir besoin d'aide... :p");
+				attroff(COLOR_PAIR(15) ) ;
 		}
 	} // fin d'augmentation	
 	} // fin du else
@@ -919,7 +941,7 @@ struct jeuGlobal suppression40(struct jeuGlobal jeu) {
 	mvprintw(27,0,"Pour confirmer, appuies sur Entrer (ou sur autre touche pour redemander la valeur)") ;
 	refresh();
 	confirmation = getch();
-	if (confirmation != 10) {
+	if (confirmation != 10) { 
 		jeu = suppression40(jeu);
 	} else { 
 	

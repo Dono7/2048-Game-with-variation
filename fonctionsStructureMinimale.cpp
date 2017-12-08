@@ -612,7 +612,7 @@ void affichageJeu(struct jeuGlobal jeu){
 }
 
 bool commandeVerifier(int commande) {
-    if (commande!=32 and commande!=101 and commande!=114 and commande!=258 and commande!=259 and commande!=260 and commande!=261) { // commande incorrecte
+    if (commande!=32 and commande!=101 and commande!=114 and commande!=122 and commande!=113 and commande!=115 and commande!=100) { // commande incorrecte
         return false;
     } else {
     return true;
@@ -655,7 +655,7 @@ struct jeuGlobal commandeExecuter(int commande, struct jeuGlobal jeu) {
 
 
             // -- HAUT --
-    if (commande==259) { 
+    if (commande==122) { 
         if ( not mouvmtPossibleHaut(jeu.plateau) ) { 
 			mvprintw(19, 10, "Mouvement impossible") ;
             return jeu;
@@ -671,7 +671,7 @@ struct jeuGlobal commandeExecuter(int commande, struct jeuGlobal jeu) {
     }
 
                 // -- DROITE --
-    if (commande==261) {
+    if (commande==100) {
         if ( not mouvmtPossibleDroite(jeu.plateau) ) {
 			mvprintw(19, 10, "Mouvement impossible") ;
             return jeu;
@@ -687,7 +687,7 @@ struct jeuGlobal commandeExecuter(int commande, struct jeuGlobal jeu) {
     }
 
             // -- Bas --
-    if (commande==258) {
+    if (commande==115) {
         if ( not mouvmtPossibleBas(jeu.plateau) ) {
 			mvprintw(19, 10, "Mouvement impossible") ;
             return jeu;
@@ -703,7 +703,7 @@ struct jeuGlobal commandeExecuter(int commande, struct jeuGlobal jeu) {
     }
 
                 // -- GAUCHE --
-    if (commande==260) {
+    if (commande==113) {
         if ( not mouvmtPossibleGauche(jeu.plateau) ) {
 			mvprintw(19, 10, "Mouvement impossible") ;
             return jeu;

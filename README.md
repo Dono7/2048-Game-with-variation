@@ -1,8 +1,10 @@
-# 2048 Game in C++
+# 2048 Game (in C++)
 
-Implémentation du jeu 2048 en C++ pour ma première année d'apprentissage d'Informatique.
+Implémentation du jeu 2048 en C++ lors de mon premier semestre de Licence d'Informatique.
 
-## Details and rules 
+## Fonctionnalités du jeu
+
+Le jeu peut être compilé aisément avec un Makefile. Il peut être compilé et lancé dans une console Linux, et contrôlé à l'aide du clavier.
 
 Toutes les fonctionnalitées ont été détaillées dans le [Rapport](https://github.com/Dono7/2048-Game-with-variation/blob/master/Rapport%20-%202048.pdf), disponible à la racine.
 
